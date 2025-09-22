@@ -1,0 +1,4 @@
+instruction,output,error
+Get all users,"{""users"": [{""id"": 1, ""name"": ""Jane Doe""}, {""id"": 2, ""name"": ""John Smith""}]}",
+Get user with id 1,"{""id"": 1, ""name"": ""Jane Doe""}",
+Create a new user named John Doe,"{""message"": ""User created successfully"", ""id"": 3, ""name"": ""John Doe""}",
