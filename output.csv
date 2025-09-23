@@ -1,4 +1,4 @@
 instruction,output,error
-Get all users,"{""users"": [{""id"": 1, ""name"": ""Jane Doe""}, {""id"": 2, ""name"": ""John Smith""}]}",
-Get user with id 1,"{""id"": 1, ""name"": ""Jane Doe""}",
-Create a new user named John Doe,"{""message"": ""User created successfully"", ""id"": 3, ""name"": ""John Doe""}",
+Get all users,,Could not find a matching API request.
+Get user with id 1,,Could not find a matching API request.
+Create a new user named John Doe,,Could not find a matching API request.

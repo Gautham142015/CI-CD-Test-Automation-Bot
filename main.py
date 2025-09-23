@@ -70,7 +70,9 @@ def get_api_request_from_instruction(instruction, postman_collection):
         # Specific check for authentication errors
         if "Incorrect API key" in str(e):
              print("\nError: The provided OpenAI API key is incorrect. Please check your OPENAI_API_KEY environment variable.")
-             exit() # Exit because the script cannot proceed without a working key.
+             # We are not exiting here to allow the script to continue and generate a report.
+             # The error will be logged in the output CSV.
+             return None
 
         print(f"An error occurred during the OpenAI API call: {e}")
         return None
@@ -169,5 +171,49 @@ def main():
     print(f"\nProcessing complete. Results saved to '{OUTPUT_CSV_PATH}'.")
 
 
+def generate_summary_chart(csv_path):
+    """
+    Generates a pie chart summarizing the test execution results from the output CSV.
+
+    Args:
+        csv_path (str): The path to the output CSV file.
+    """
+    try:
+        df = pd.read_csv(csv_path)
+        # An empty 'error' column signifies a successful run for that instruction.
+        # We handle both empty strings and actual NaN values.
+        successful_runs = df['error'].isna() | (df['error'] == '')
+        num_successful = successful_runs.sum()
+        num_failed = len(df) - num_successful
+
+        labels = ['Successful', 'Failed']
+        counts = [num_successful, num_failed]
+        colors = ['#4CAF50', '#F44336'] # Green for success, Red for failure
+
+        # Only generate a chart if there are results to show
+        if sum(counts) > 0:
+            # Import matplotlib here to avoid making it a hard dependency for the whole script
+            import matplotlib.pyplot as plt
+
+            plt.figure(figsize=(8, 6))
+            plt.pie(counts, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140,
+                    wedgeprops={'edgecolor': 'white', 'linewidth': 1})
+            plt.title('API Test Execution Summary')
+            plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+            chart_path = 'test_summary_chart.png'
+            plt.savefig(chart_path)
+            print(f"\nGenerated summary chart and saved to '{chart_path}'.")
+        else:
+            print("\nNo results to generate a chart from.")
+
+    except FileNotFoundError:
+        print(f"Error: Could not find '{csv_path}' to generate chart.")
+    except Exception as e:
+        print(f"An error occurred during chart generation: {e}")
+
+
 if __name__ == "__main__":
     main()
+    # After the main logic, generate the summary chart
+    generate_summary_chart(OUTPUT_CSV_PATH)
